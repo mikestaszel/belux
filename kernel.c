@@ -89,5 +89,5 @@ void terminal_writestring(const char* str) {
 
 void kernel_main(void) {
 	terminal_initialize();
-	terminal_writestring("Hello, world!\n");
+	terminal_writestring("Hello, world!");
 }
