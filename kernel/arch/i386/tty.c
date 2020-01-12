@@ -14,15 +14,6 @@ size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
 
-// TODO: move this elsewhere!
-size_t strlen(const char* str) {
-	size_t len = 0;
-	while (str[len]) {
-		len++;
-	}
-	return len;
-}
-
 void terminal_blank() {
 	// blank out the screen:
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
@@ -82,14 +73,4 @@ void terminal_putchar(char c) {
 			terminal_scroll();
 		}
 	}
-}
-
-void terminal_write(const char* data, size_t size) {
-	for (size_t i = 0; i < size; i++) {
-		terminal_putchar(data[i]);
-	}
-}
-
-void terminal_writestring(const char* str) {
-	terminal_write(str, strlen(str));
 }

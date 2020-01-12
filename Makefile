@@ -8,47 +8,63 @@ CC:=i686-elf-gcc
 CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
 NASMFLAGS:=-felf32 -w+orphan-labels
 
-ARCHDIR:=kernel/arch/i386
+ARCH_DIR:=kernel/arch/i386
+LIBCK_DIR:=kernel/libck
 
 ARCH_OBJS=\
-$(ARCHDIR)/crti.o \
-$(ARCHDIR)/crtbegin.o \
-$(ARCHDIR)/boot.o \
-$(ARCHDIR)/tty.o \
-$(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
+$(ARCH_DIR)/crti.o \
+$(ARCH_DIR)/crtbegin.o \
+$(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/tty.o \
+$(ARCH_DIR)/crtend.o \
+$(ARCH_DIR)/crtn.o \
+
+LIBCK_OBJS=\
+$(LIBCK_DIR)/stdio/printf.o \
+$(LIBCK_DIR)/stdio/putchar.o \
+$(LIBCK_DIR)/string/strlen.o \
 
 LINK_LIST=\
-$(ARCHDIR)/crti.o \
-$(ARCHDIR)/crtbegin.o \
-$(ARCHDIR)/boot.o \
-$(ARCHDIR)/tty.o \
-$(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
+$(ARCH_DIR)/crti.o \
+$(ARCH_DIR)/crtbegin.o \
+$(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/tty.o \
+$(LIBCK_OBJS) \
+$(ARCH_DIR)/crtend.o \
+$(ARCH_DIR)/crtn.o \
 
 ISO_FILE=belux.iso
 KERNEL_FILE=iso/boot/belux.bin
 
 .PHONY: run clean all
 
-$(KERNEL_FILE): $(ARCH_OBJS)
-	$(CC) -c kernel/kernel/kernel.c -o kernel/kernel/kernel.o $(CFLAGS) -std=gnu11 -Ikernel/include
-	$(CC) -T $(ARCHDIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) kernel/kernel/kernel.o -lgcc
+$(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS)
+	$(CC) -c kernel/kernel/kernel.c -o kernel/kernel/kernel.o $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) kernel/kernel/kernel.o -lgcc
 
-$(ARCHDIR)/boot.o: $(ARCHDIR)/boot.asm
+$(ARCH_DIR)/boot.o: $(ARCH_DIR)/boot.asm
 	nasm $(NASMFLAGS) $< -o $@
 
-$(ARCHDIR)/crti.o: $(ARCHDIR)/crti.asm
+$(ARCH_DIR)/crti.o: $(ARCH_DIR)/crti.asm
 	nasm $(NASMFLAGS) $< -o $@
 
-$(ARCHDIR)/crtn.o: $(ARCHDIR)/crtn.asm
+$(ARCH_DIR)/crtn.o: $(ARCH_DIR)/crtn.asm
 	nasm $(NASMFLAGS) $< -o $@
 
-$(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
+$(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
-$(ARCHDIR)/tty.o: $(ARCHDIR)/tty.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include
+$(ARCH_DIR)/tty.o: $(ARCH_DIR)/tty.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+
+$(LIBCK_DIR)/stdio/printf.o: $(LIBCK_DIR)/stdio/printf.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
+
+$(LIBCK_DIR)/stdio/putchar.o: $(LIBCK_DIR)/stdio/putchar.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+
+$(LIBCK_DIR)/string/strlen.o: $(LIBCK_DIR)/string/strlen.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
 
 $(ISO_FILE): $(KERNEL_FILE)
 	grub-mkrescue -o $(ISO_FILE) iso/
@@ -57,7 +73,7 @@ run: $(ISO_FILE)
 	qemu-system-i386 -cdrom $(ISO_FILE)
 
 clean:
-	$(RM) $(ARCH_OBJS)
+	$(RM) $(ARCH_OBJS) $(LIBCK_OBJS)
 	$(RM) kernel/kernel/kernel.o $(KERNEL_FILE) $(ISO_FILE)
 
 all: $(ISO_FILE)
