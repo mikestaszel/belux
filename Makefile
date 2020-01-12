@@ -2,9 +2,11 @@ CFLAGS?=-O2 -g
 CPPFLAGS?=
 LDFLAGS?=
 LIBS?=
+NASMFLAGS?=
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
 CC:=i686-elf-gcc
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
+NASMFLAGS:=-felf32 -w+orphan-labels
 
 ARCHDIR:=kernel/arch/i386
 
@@ -34,13 +36,13 @@ $(KERNEL_FILE): $(ARCH_OBJS)
 	$(CC) -T $(ARCHDIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) kernel/kernel/kernel.o -lgcc
 
 $(ARCHDIR)/boot.o: $(ARCHDIR)/boot.asm
-	nasm -felf32 $< -o $@
+	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCHDIR)/crti.o: $(ARCHDIR)/crti.asm
-	nasm -felf32 $< -o $@
+	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCHDIR)/crtn.o: $(ARCHDIR)/crtn.asm
-	nasm -felf32 $< -o $@
+	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
