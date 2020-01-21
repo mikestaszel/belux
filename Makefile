@@ -18,6 +18,7 @@ $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io_ports.o \
 $(ARCH_DIR)/tty.o \
 $(ARCH_DIR)/crtend.o \
@@ -40,6 +41,7 @@ $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io_ports.o \
 $(KERNEL_DIR)/idt_init.o \
 $(KERNEL_DIR)/irq.o \
@@ -81,6 +83,9 @@ $(ARCH_DIR)/gdt.o: $(ARCH_DIR)/gdt.asm
 	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCH_DIR)/idt.o: $(ARCH_DIR)/idt.asm
+	nasm $(NASMFLAGS) $< -o $@
+
+$(ARCH_DIR)/tss.o: $(ARCH_DIR)/tss.asm
 	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCH_DIR)/io_ports.o: $(ARCH_DIR)/io_ports.asm
