@@ -31,9 +31,10 @@ $(LIBCK_DIR)/string/memset.o \
 $(LIBCK_DIR)/string/strlen.o \
 
 KERNEL_OBJS=\
-$(KERNEL_DIR)/idt_init.o \
+$(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/irq.o \
 $(KERNEL_DIR)/gdt.o \
+$(KERNEL_DIR)/tss.o \
 $(KERNEL_DIR)/kernel.o \
 
 LINK_LIST=\
@@ -44,8 +45,9 @@ $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
 $(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io_ports.o \
-$(KERNEL_DIR)/idt_init.o \
+$(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/irq.o \
+$(KERNEL_DIR)/tss.o \
 $(KERNEL_DIR)/gdt.o \
 $(ARCH_DIR)/tty.o \
 $(LIBCK_OBJS) \
@@ -60,13 +62,16 @@ KERNEL_FILE=iso/boot/belux.bin
 $(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) $(KERNEL_DIR)/kernel.o -lgcc
 
-$(KERNEL_DIR)/idt_init.o: $(KERNEL_DIR)/idt_init.c
+$(KERNEL_DIR)/idt.o: $(KERNEL_DIR)/idt.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
 $(KERNEL_DIR)/irq.o: $(KERNEL_DIR)/irq.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
 $(KERNEL_DIR)/gdt.o: $(KERNEL_DIR)/gdt.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+
+$(KERNEL_DIR)/tss.o: $(KERNEL_DIR)/tss.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
 $(KERNEL_DIR)/kernel.o: $(KERNEL_DIR)/kernel.c

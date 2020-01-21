@@ -4,9 +4,7 @@
 #include <kernel/tss.h>
 #include <kernel/gdt.h>
 #include <kernel/idt.h>
-#include <kernel/idt_init.h>
 #include <string.h>
-
 
 #define IDTENTRY(X) (idt.entries[(X)])
 

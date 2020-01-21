@@ -2,7 +2,7 @@
 #define _KERNEL_TSS_H
 
 extern void tss_flush(void);
-static void write_tss(int32_t num, uint16_t ss0, uint32_t esp0);
+void write_tss(int32_t num, uint16_t ss0, uint32_t esp0);
 
 typedef struct tss_entry {
 	uint32_t	prev_tss;

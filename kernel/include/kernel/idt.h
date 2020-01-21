@@ -1,6 +1,8 @@
 #ifndef _KERNEL_IDT_H
 #define _KERNEL_IDT_H
 
+extern void idt_init();
+
 typedef struct {
 	uint16_t base_low;
 	uint16_t sel;
