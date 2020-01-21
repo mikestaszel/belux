@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
 #include <kernel/tty.h>
 
 #include "vga.h"
@@ -61,6 +60,9 @@ void terminal_putchar(char c) {
 	if (c == '\n') {
 		terminal_column = 0;
 		terminal_row++;
+		if (terminal_row == VGA_HEIGHT) {
+			terminal_scroll();
+		}
 		return;
 	}
 
