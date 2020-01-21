@@ -2,6 +2,7 @@
 #define _KERNEL_GDT_H
 
 extern void gdt_flush(uintptr_t);
+void gdt_install(void);
 
 typedef struct {
 	/* Limits */

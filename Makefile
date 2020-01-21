@@ -33,6 +33,7 @@ $(LIBCK_DIR)/string/strlen.o \
 KERNEL_OBJS=\
 $(KERNEL_DIR)/idt_init.o \
 $(KERNEL_DIR)/irq.o \
+$(KERNEL_DIR)/gdt.o \
 $(KERNEL_DIR)/kernel.o \
 
 LINK_LIST=\
@@ -45,6 +46,7 @@ $(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io_ports.o \
 $(KERNEL_DIR)/idt_init.o \
 $(KERNEL_DIR)/irq.o \
+$(KERNEL_DIR)/gdt.o \
 $(ARCH_DIR)/tty.o \
 $(LIBCK_OBJS) \
 $(ARCH_DIR)/crtend.o \
@@ -62,6 +64,9 @@ $(KERNEL_DIR)/idt_init.o: $(KERNEL_DIR)/idt_init.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
 $(KERNEL_DIR)/irq.o: $(KERNEL_DIR)/irq.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+
+$(KERNEL_DIR)/gdt.o: $(KERNEL_DIR)/gdt.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
 $(KERNEL_DIR)/kernel.o: $(KERNEL_DIR)/kernel.c
