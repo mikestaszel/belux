@@ -2,6 +2,7 @@
 #define _KERNEL_IDT_H
 
 extern void idt_init();
+void idt_install(void);
 
 typedef struct {
 	uint16_t base_low;

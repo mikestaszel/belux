@@ -1,12 +1,10 @@
+#include <string.h>
 #include <stdint.h>
 #include <kernel/io_ports.h>
+#include <kernel/idt.h>
 
 #define IDT_SIZE 256
-
-// IDT code mostly from:
-// https://wiki.osdev.org/Interrupt_Descriptor_Table
-// https://wiki.osdev.org/Interrupts_tutorial
-// https://arjunsreedharan.org/post/99370248137/kernels-201-lets-write-a-kernel-with-keyboard
+#define IDTENTRY(X) (idt.entries[(X)])
 
 struct IDT_entry {
 	uint16_t offset_lowerbits; // offset bits 0..15
@@ -18,7 +16,17 @@ struct IDT_entry {
 
 struct IDT_entry IDT[IDT_SIZE];
 
-void idt_init(void) {
+typedef void (*idt_gate_t)(void);
+
+void idt_set_gate(uint8_t num, idt_gate_t base, uint16_t sel, uint8_t flags) {
+	IDTENTRY(num).base_low = ((uintptr_t)base & 0xFFFF);
+	IDTENTRY(num).base_high = ((uintptr_t)base >> 16) & 0xFFFF;
+	IDTENTRY(num).sel = sel;
+	IDTENTRY(num).zero = 0;
+	IDTENTRY(num).flags = flags | 0x60;
+}
+
+void idt_init() {
 	extern int load_idt();
 	extern int irq0();
 	extern int irq1();
@@ -188,4 +196,13 @@ void idt_init(void) {
 	idt_ptr[1] = idt_address >> 16;
 
 	load_idt(idt_ptr);
+}
+
+void idt_install(void) {
+	idt_pointer_t* idtp = &idt.pointer;
+	idtp->limit = sizeof idt.entries - 1;
+	idtp->base = (uintptr_t)&IDTENTRY(0);
+	memset(&IDTENTRY(0), 0, sizeof idt.entries);
+
+	idt_init();
 }
