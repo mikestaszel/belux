@@ -25,6 +25,7 @@ $(ARCH_DIR)/crtn.o \
 LIBCK_OBJS=\
 $(LIBCK_DIR)/stdio/printf.o \
 $(LIBCK_DIR)/stdio/putchar.o \
+$(LIBCK_DIR)/string/memset.o \
 $(LIBCK_DIR)/string/strlen.o \
 
 KERNEL_OBJS=\
@@ -88,6 +89,9 @@ $(LIBCK_DIR)/stdio/printf.o: $(LIBCK_DIR)/stdio/printf.c
 
 $(LIBCK_DIR)/stdio/putchar.o: $(LIBCK_DIR)/stdio/putchar.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+
+$(LIBCK_DIR)/string/memset.o: $(LIBCK_DIR)/string/memset.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
 
 $(LIBCK_DIR)/string/strlen.o: $(LIBCK_DIR)/string/strlen.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
