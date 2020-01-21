@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <kernel/tty.h>
+#include <kernel/tss.h>
+#include <kernel/gdt.h>
+#include <kernel/idt.h>
 #include <kernel/idt_init.h>
 #include <string.h>
-
-extern void gdt_flush(uintptr_t);
 
 #define GDTENTRY(X) (gdt.entries[(X)])
 
@@ -21,8 +22,6 @@ void gdt_set_gate(uint8_t num, uint64_t base, uint64_t limit, uint8_t access, ui
 	/* Access flags */
 	GDTENTRY(num).access = access;
 }
-
-static void write_tss(int32_t num, uint16_t ss0, uint32_t esp0);
 
 void gdt_install(void) {
 	gdt_pointer_t *gdtp = &gdt.pointer;
@@ -68,30 +67,9 @@ void set_kernel_stack(uintptr_t stack) {
 	gdt.tss.esp0 = stack;
 }
 
-typedef struct {
-	uint16_t base_low;
-	uint16_t sel;
-	uint8_t zero;
-	uint8_t flags;
-	uint16_t base_high;
-} __attribute__((packed)) idt_entry_t;
-
-typedef struct {
-	uint16_t limit;
-	uintptr_t base;
-} __attribute__((packed)) idt_pointer_t;
-
-/* In the future we may need to put a lock on the access of this */
-static struct {
-	idt_entry_t entries[256];
-	idt_pointer_t pointer;
-} idt __attribute__((used));
-
 #define IDTENTRY(X) (idt.entries[(X)])
 
 typedef void (*idt_gate_t)(void);
-
-extern void load_idt(uintptr_t);
 
 void idt_set_gate(uint8_t num, idt_gate_t base, uint16_t sel, uint8_t flags) {
 	IDTENTRY(num).base_low = ((uintptr_t)base & 0xFFFF);
