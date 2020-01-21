@@ -17,7 +17,7 @@ resb 16384 ; 16 KiB
 stack_top:
 
 section .text
-
+global _start:function (_start.end - _start)
 _start:
 	cli
 	mov esp, stack_top
@@ -27,5 +27,3 @@ _start:
 .hang:	hlt
 	jmp .hang
 .end:
-
-global _start:function (_start.end - _start)

@@ -16,6 +16,7 @@ ARCH_OBJS=\
 $(ARCH_DIR)/crti.o \
 $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
 $(ARCH_DIR)/io_ports.o \
 $(ARCH_DIR)/tty.o \
@@ -37,6 +38,7 @@ LINK_LIST=\
 $(ARCH_DIR)/crti.o \
 $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
+$(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
 $(ARCH_DIR)/io_ports.o \
 $(KERNEL_DIR)/idt_init.o \
@@ -74,6 +76,9 @@ $(ARCH_DIR)/crtn.o: $(ARCH_DIR)/crtn.asm
 
 $(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
+
+$(ARCH_DIR)/gdt.o: $(ARCH_DIR)/gdt.asm
+	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCH_DIR)/idt.o: $(ARCH_DIR)/idt.asm
 	nasm $(NASMFLAGS) $< -o $@
