@@ -3,8 +3,6 @@
 #include <kernel/tss.h>
 #include <kernel/gdt.h>
 
-// gdt.c
-
 #define GDTENTRY(X) (gdt.entries[(X)])
 
 void gdt_set_gate(uint8_t num, uint64_t base, uint64_t limit, uint8_t access, uint8_t gran) {
