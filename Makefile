@@ -62,59 +62,23 @@ KERNEL_FILE=iso/boot/belux.bin
 $(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) $(KERNEL_DIR)/kernel.o -lgcc
 
-$(KERNEL_DIR)/idt.o: $(KERNEL_DIR)/idt.c
+$(KERNEL_DIR)/%.o: $(KERNEL_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
-$(KERNEL_DIR)/irq.o: $(KERNEL_DIR)/irq.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
-
-$(KERNEL_DIR)/gdt.o: $(KERNEL_DIR)/gdt.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
-
-$(KERNEL_DIR)/tss.o: $(KERNEL_DIR)/tss.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
-
-$(KERNEL_DIR)/kernel.o: $(KERNEL_DIR)/kernel.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
-
-$(ARCH_DIR)/boot.o: $(ARCH_DIR)/boot.asm
-	nasm $(NASMFLAGS) $< -o $@
-
-$(ARCH_DIR)/crti.o: $(ARCH_DIR)/crti.asm
-	nasm $(NASMFLAGS) $< -o $@
-
-$(ARCH_DIR)/crtn.o: $(ARCH_DIR)/crtn.asm
+$(ARCH_DIR)/%.o: $(ARCH_DIR)/%.asm
 	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
-$(ARCH_DIR)/gdt.o: $(ARCH_DIR)/gdt.asm
-	nasm $(NASMFLAGS) $< -o $@
-
-$(ARCH_DIR)/idt.o: $(ARCH_DIR)/idt.asm
-	nasm $(NASMFLAGS) $< -o $@
-
-$(ARCH_DIR)/tss.o: $(ARCH_DIR)/tss.asm
-	nasm $(NASMFLAGS) $< -o $@
-
-$(ARCH_DIR)/io_ports.o: $(ARCH_DIR)/io_ports.asm
-	nasm $(NASMFLAGS) $< -o $@
-
-$(ARCH_DIR)/tty.o: $(ARCH_DIR)/tty.c
+$(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
-$(LIBCK_DIR)/stdio/printf.o: $(LIBCK_DIR)/stdio/printf.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
-
-$(LIBCK_DIR)/stdio/putchar.o: $(LIBCK_DIR)/stdio/putchar.c
+$(LIBCK_DIR)/stdio/%.o: $(LIBCK_DIR)/stdio/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
-$(LIBCK_DIR)/string/memset.o: $(LIBCK_DIR)/string/memset.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
-
-$(LIBCK_DIR)/string/strlen.o: $(LIBCK_DIR)/string/strlen.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/libck/include
+$(LIBCK_DIR)/string/%.o: $(LIBCK_DIR)/string/%.c
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
 
 $(ISO_FILE): $(KERNEL_FILE)
 	grub-mkrescue -o $(ISO_FILE) iso/
