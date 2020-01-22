@@ -1,9 +1,9 @@
 #include <stddef.h>
 
-void* memset(void* dest, int c, size_t n) {
-	asm volatile("cld; rep stosb"
-	             : "=c"((int){0})
-	             : "D"(dest), "a"(c), "c"(n)
-	             : "flags", "memory");
+void* memset(void* dest, int val, size_t len) {
+	unsigned char* ptr = dest;
+	while (len-- > 0) {
+		*ptr++ = val;
+	}
 	return dest;
 }
