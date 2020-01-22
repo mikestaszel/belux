@@ -27,6 +27,9 @@ $(ARCH_DIR)/crtn.o \
 LIBCK_OBJS=\
 $(LIBCK_DIR)/stdio/printf.o \
 $(LIBCK_DIR)/stdio/putchar.o \
+$(LIBCK_DIR)/string/memcmp.o \
+$(LIBCK_DIR)/string/memcpy.o \
+$(LIBCK_DIR)/string/memmove.o \
 $(LIBCK_DIR)/string/memset.o \
 $(LIBCK_DIR)/string/strlen.o \
 
