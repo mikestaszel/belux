@@ -99,28 +99,14 @@ void irq1_handler(void) {
 
         if (scancode & 0x80) {
             // key is released
-            if (scancode == 0xaa) {
-                shift_pressed = 0;
-                return;
-            }
-            if (scancode == 0xb6) {
+            if (scancode == 0xaa || scancode == 0xb6) {
                 shift_pressed = 0;
                 return;
             }
         }
         else {
-            if (scancode == 42) {
+            if (scancode == 42 || scancode == 54) {
                 shift_pressed = 1;
-                return;
-            }
-            if (scancode == 54) {
-                shift_pressed = 1;
-                return;
-            }
-
-            if (scancode == 0x1C) {
-                // ENTER:
-                printf("\n");
                 return;
             }
 
