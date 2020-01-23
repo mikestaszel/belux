@@ -4,11 +4,16 @@
 #include <kernel/tss.h>
 #include <kernel/gdt.h>
 #include <kernel/idt.h>
+#include <kernel/serial.h>
 #include <string.h>
 
 void kernel_main() {
 	gdt_install();
 	idt_install();
+
+	serial_initialize();
+	write_serial_str("Hello, world!");
+
 	terminal_initialize();
 
 	printf("Hello, world!\n");

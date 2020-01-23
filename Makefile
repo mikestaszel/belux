@@ -41,6 +41,7 @@ $(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/irq.o \
 $(KERNEL_DIR)/gdt.o \
 $(KERNEL_DIR)/tss.o \
+$(KERNEL_DIR)/serial.o \
 $(KERNEL_DIR)/kernel.o \
 
 DRIVERS_OBJS=\
@@ -57,6 +58,7 @@ $(ARCH_DIR)/io_ports.o \
 $(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/irq.o \
 $(KERNEL_DIR)/tss.o \
+$(KERNEL_DIR)/serial.o \
 $(KERNEL_DIR)/gdt.o \
 $(ARCH_DIR)/tty.o \
 $(LIBCK_OBJS) \
@@ -99,7 +101,7 @@ $(ISO_FILE): $(KERNEL_FILE)
 iso: $(ISO_FILE)
 
 run: $(ISO_FILE)
-	qemu-system-i386 -cdrom $(ISO_FILE)
+	qemu-system-i386 -serial stdio -cdrom $(ISO_FILE)
 
 clean:
 	$(RM) $(ARCH_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS) $(KERNEL_FILE) $(ISO_FILE)
