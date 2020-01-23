@@ -1,4 +1,4 @@
-CFLAGS?=-O2 -g
+CFLAGS?=-O2 -g -std=gnu11
 CPPFLAGS?=
 LDFLAGS?=
 LIBS?=
@@ -7,6 +7,8 @@ NASMFLAGS?=
 CC:=i686-elf-gcc
 CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
 NASMFLAGS:=-felf32 -w+orphan-labels
+
+KERNELINCLUDE:=-Ibelux/include -Ibelux/libck/include
 
 ARCH_DIR:=belux/arch/i386
 LIBCK_DIR:=belux/libck
@@ -71,10 +73,10 @@ $(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(DRIVERS_OBJS) $(KERNEL_OBJS)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) $(KERNEL_DIR)/kernel.o -lgcc
 
 $(KERNEL_DIR)/%.o: $(KERNEL_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
 $(DRIVERS_DIR)/%.o: $(DRIVERS_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
 $(ARCH_DIR)/%.o: $(ARCH_DIR)/%.asm
 	nasm $(NASMFLAGS) $< -o $@
@@ -83,13 +85,13 @@ $(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
 $(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
 $(LIBCK_DIR)/stdio/%.o: $(LIBCK_DIR)/stdio/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
 $(LIBCK_DIR)/string/%.o: $(LIBCK_DIR)/string/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
 $(ISO_FILE): $(KERNEL_FILE)
 	grub-mkrescue -o $(ISO_FILE) iso/
@@ -98,7 +100,6 @@ run: $(ISO_FILE)
 	qemu-system-i386 -cdrom $(ISO_FILE)
 
 clean:
-	$(RM) $(ARCH_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS)
-	$(RM) $(KERNEL_FILE) $(ISO_FILE)
+	$(RM) $(ARCH_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS) $(KERNEL_FILE) $(ISO_FILE)
 
 all: $(ISO_FILE)
