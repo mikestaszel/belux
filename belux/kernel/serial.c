@@ -28,3 +28,12 @@ void write_serial_str(char* input) {
 		write_serial(input[i]);
 	}
 }
+
+int serial_received() {
+	return read_port(PORT + 5) & 1;
+}
+
+char read_serial() {
+	while (serial_received() == 0); //wait
+	return read_port(PORT);
+}
