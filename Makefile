@@ -8,10 +8,10 @@ CC:=i686-elf-gcc
 CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
 NASMFLAGS:=-felf32 -w+orphan-labels
 
-ARCH_DIR:=kernel/arch/i386
-LIBCK_DIR:=kernel/libck
-KERNEL_DIR:=kernel/kernel
-DRIVERS_DIR:=kernel/drivers
+ARCH_DIR:=belux/arch/i386
+LIBCK_DIR:=belux/libck
+KERNEL_DIR:=belux/kernel
+DRIVERS_DIR:=belux/drivers
 
 ARCH_OBJS=\
 $(ARCH_DIR)/crti.o \
@@ -71,10 +71,10 @@ $(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(DRIVERS_OBJS) $(KERNEL_OBJS)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) $(KERNEL_DIR)/kernel.o -lgcc
 
 $(KERNEL_DIR)/%.o: $(KERNEL_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
 
 $(DRIVERS_DIR)/%.o: $(DRIVERS_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
 
 $(ARCH_DIR)/%.o: $(ARCH_DIR)/%.asm
 	nasm $(NASMFLAGS) $< -o $@
@@ -83,13 +83,13 @@ $(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
 $(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
 
 $(LIBCK_DIR)/stdio/%.o: $(LIBCK_DIR)/stdio/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
 
 $(LIBCK_DIR)/string/%.o: $(LIBCK_DIR)/string/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ikernel/include -Ikernel/libck/include
+	$(CC) -c $< -o $@ $(CFLAGS) -std=gnu11 -Ibelux/include -Ibelux/libck/include
 
 $(ISO_FILE): $(KERNEL_FILE)
 	grub-mkrescue -o $(ISO_FILE) iso/
