@@ -5,9 +5,10 @@
 #include <kernel/gdt.h>
 #include <kernel/idt.h>
 #include <kernel/serial.h>
+#include <kernel/multiboot.h>
 #include <string.h>
 
-void kernel_main(multiboot_info* mbt, unsigned int magic) {
+void kernel_main(multiboot_info_t* mbt, unsigned int magic) {
 	gdt_install();
 	idt_install();
 
