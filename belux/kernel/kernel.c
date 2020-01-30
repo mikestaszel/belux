@@ -7,7 +7,7 @@
 #include <kernel/serial.h>
 #include <string.h>
 
-void kernel_main() {
+void kernel_main(multiboot_info* mbt, unsigned int magic) {
 	gdt_install();
 	idt_install();
 
