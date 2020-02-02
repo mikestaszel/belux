@@ -3,7 +3,8 @@ ENTRY(_loader)
 SECTIONS
 {
 	. = 0xC0100000;
-	_kernel_start = .;
+	_kernel_virtual_start = .;
+	_kernel_physical_start = . - 0xC0000000;
 
 	.text ALIGN (4K) : AT (ADDR (.text) - 0xC0000000)
 	{
@@ -27,5 +28,6 @@ SECTIONS
 		*(.bss)
 		*(.bootstrap_stack)
 	}
-	_kernel_end = .;
+	_kernel_virtual_end = .;
+	_kernel_physical_end = . - 0xC0000000;
 }

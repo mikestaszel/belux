@@ -4,7 +4,9 @@
 #include <stddef.h>
 #include <string.h>
 
-void fb_put_ui(uint32_t i)
+// printf for the kernel from aenix (http://littleosbook.github.io/)
+
+void fb_put_unsigned_int(uint32_t i)
 {
 	uint32_t n, digit;
 	if (i >= 1000000000) {
@@ -17,20 +19,17 @@ void fb_put_ui(uint32_t i)
 	}
 	while (n > 0) {
 		digit = i / n;
-		putchar('0'+digit);
+		putchar('0' + digit);
 		i %= n;
 		n /= 10;
 	}
 }
 
-void fb_put_ui_hex(unsigned int n)
+void fb_put_hex(unsigned int n)
 {
 	char *chars = "0123456789ABCDEF";
 	unsigned char b = 0;
 	int i;
-
-	putchar('0');
-	putchar('x');
 
 	for (i = 7; i >= 0; --i) {
 		b = (n >> i*4) & 0x0F;
@@ -38,18 +37,11 @@ void fb_put_ui_hex(unsigned int n)
 	}
 }
 
-void fb_put_s(const char* str) {
-	size_t len = strlen(str);
-	for (size_t i = 0; i < len; i++) {
-		putchar(str[i]);
-	}
-}
-
 void printf(char *s, ...)
 {
 	va_list ap;
 	char *p;
-	uint32_t uival;
+	uint32_t val;
 	char *sval;
 
 	va_start(ap, s);
@@ -59,26 +51,30 @@ void printf(char *s, ...)
 			continue;
 		}
 
+		// the next character is a format character:
 		switch (*++p) {
 			case 'c':
-				uival = va_arg(ap, uint32_t);
-				putchar((uint8_t) uival);
+				val = va_arg(ap, uint32_t);
+				putchar((uint8_t) val);
 				break;
 			case 'u':
-				uival = va_arg(ap, uint32_t);
-				fb_put_ui(uival);
+				val = va_arg(ap, uint32_t);
+				fb_put_unsigned_int(val);
 				break;
 			case 'x':
-				uival = va_arg(ap, uint32_t);
-				fb_put_ui_hex(uival);
+				val = va_arg(ap, uint32_t);
+				fb_put_hex(val);
 				break;
 			case 'X':
-				uival = va_arg(ap, uint32_t);
-				fb_put_ui_hex(uival);
+				val = va_arg(ap, uint32_t);
+				fb_put_hex(val);
 				break;
 			case 's':
 				sval = va_arg(ap, char*);
-				fb_put_s(sval);
+				size_t len = strlen(sval);
+				for (size_t i = 0; i < len; i++) {
+					putchar(sval[i]);
+				}
 				break;
 			case '%':
 				putchar('%');

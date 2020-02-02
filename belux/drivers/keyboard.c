@@ -86,12 +86,12 @@ static char shift_pressed = 0;
 
 void keyboard_handler() {
 	// keyboard!
-	write_port(0x20, 0x20);
+	outb(0x20, 0x20);
 
-	unsigned char status = read_port(0x64);
+	unsigned char status = inb(0x64);
 	
 	if (status & 0x01) {
-		unsigned char scancode = read_port(0x60);
+		unsigned char scancode = inb(0x60);
 
 		if (scancode & 0x80) {
 			// key is released
