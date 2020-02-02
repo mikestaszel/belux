@@ -16,7 +16,7 @@ KERNEL_PAGE_NUMBER equ (KERNEL_VIRTUAL_BASE >> 22)  ; Page directory index of ke
 
 section .data
 align 0x1000
-BootPageDirectory:
+boot_page_directory:
 	; This page directory entry identity-maps the first 4MB of the 32-bit physical address space.
 	; All bits are clear except the following:
 	; bit 7: PS The kernel page is 4MB.
@@ -32,7 +32,7 @@ BootPageDirectory:
 
 section .text
 align 4
-MultiBootHeader:
+multiboot_header:
 	dd MAGIC
 	dd FLAGS
 	dd CHECKSUM
@@ -42,8 +42,8 @@ STACKSIZE equ 0x4000
 _loader:
 	; NOTE: Until paging is set up, the code must be position-independent and use physical
 	; addresses, not virtual ones!
-	mov ecx, (BootPageDirectory - KERNEL_VIRTUAL_BASE)
-	mov cr3, ecx                                        ; Load Page Directory Base Register.
+	mov ecx, (boot_page_directory - KERNEL_VIRTUAL_BASE)
+	mov cr3, ecx                                ; Load Page Directory Base Register.
 
 	mov ecx, cr4
 	or ecx, 0x00000010                          ; Set PSE bit in CR4 to enable 4MB pages.
@@ -53,25 +53,31 @@ _loader:
 	or ecx, 0x80000000                          ; Set PG bit in CR0 to enable paging.
 	mov cr0, ecx
 
+	; paging is now enabled!
+
 	; Start fetching instructions in kernel space.
 	; Since eip at this point holds the physical address of this command (approximately 0x00100000)
-	; we need to do a long jump to the correct virtual address of StartInHigherHalf which is
+	; we need to do a long jump to the correct virtual address of higher_half which is
 	; approximately 0xC0100000.
-	lea ecx, [StartInHigherHalf]
-	jmp ecx                                                     ; NOTE: Must be absolute jump!
+	lea ecx, [higher_half]
+	jmp ecx
 
-StartInHigherHalf:
-	; Unmap the identity-mapped first 4MB of physical address space. It should not be needed
-	; anymore.
-	mov dword [BootPageDirectory], 0
+higher_half:
+	; Unmap the identity-mapped first 4MB of physical address space. It should not be needed anymore.
+	mov dword [boot_page_directory], 0
+	
+	; invalidate any TLB references to virtual address 0:
 	invlpg [0]
 
-	; NOTE: From now on, paging should be enabled. The first 4MB of physical address space is
+	; NOTE: The first 4MB of physical address space is
 	; mapped starting at KERNEL_VIRTUAL_BASE. Everything is linked to this address, so no more
 	; position-independent code or funny business with virtual-to-physical address translation
 	; should be necessary. We now have a higher-half kernel.
 	mov esp, stack + STACKSIZE
-	push eax
+	push eax ; GRUB magic number
+
+	; the address of multiboot info passed is physical - need to make it virtual
+	add ebx, KERNEL_VIRTUAL_BASE
 	push ebx
 
 	call kernel_main
@@ -80,4 +86,4 @@ StartInHigherHalf:
 section .bss
 align 32
 stack:
-	resb STACKSIZE      ; reserve 16k stack on a uint64_t boundary
+	resb STACKSIZE
