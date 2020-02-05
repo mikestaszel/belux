@@ -34,6 +34,6 @@ int serial_received() {
 }
 
 char read_serial() {
-	while (serial_received() == 0); //wait
+	while (serial_received() == 0); // wait
 	return inb(PORT);
 }

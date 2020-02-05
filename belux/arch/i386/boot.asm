@@ -15,7 +15,7 @@ KERNEL_VIRTUAL_BASE equ 0xC0000000                 ; 3GB
 KERNEL_PAGE_NUMBER equ (KERNEL_VIRTUAL_BASE >> 22) ; Page directory index of kernel's 4MB PTE.
 
 section .data
-align 0x1000
+align 4096
 boot_page_directory:
 	; This page directory entry identity-maps the first 4MB of the 32-bit physical address space.
 	; All bits are clear except the following:
@@ -24,6 +24,7 @@ boot_page_directory:
 	; bit 0: P  The kernel page is present.
 	dd 0x00000083
 	times (KERNEL_PAGE_NUMBER - 1) dd 0 ; pages before kernel space.
+
 	; This page directory entry defines a 4MB page containing the kernel.
 	dd 0x00000083
 	times (1024 - KERNEL_PAGE_NUMBER - 1) dd 0 ; pages after the kernel image.
@@ -35,7 +36,7 @@ multiboot_header:
 	dd FLAGS
 	dd CHECKSUM
 
-STACKSIZE equ 0x4000
+STACKSIZE equ 16384
 
 _loader:
 	mov ecx, (boot_page_directory - KERNEL_VIRTUAL_BASE)
@@ -60,9 +61,8 @@ higher_half:
 	
 	invlpg [0] ; invalidate any TLB references to virtual address 0
 
-	; NOTE: The first 4MB of physical address space is
-	; mapped starting at KERNEL_VIRTUAL_BASE. Everything is linked to this address, so no more
-	; position-independent code or should be necessary.
+	; NOTE: The first 4MB of physical address space is mapped starting at KERNEL_VIRTUAL_BASE.
+	; Everything is linked to this address, so no more position-independent code should be necessary.
 	mov esp, stack + STACKSIZE
 	push eax ; magic number
 

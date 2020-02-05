@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-void printf(char *fmt, ...);
+void printf(char* fmt, ...);
 int putchar(int);
 
 #ifdef __cplusplus

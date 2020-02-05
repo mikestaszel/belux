@@ -91,7 +91,6 @@ void terminal_putchar(char c) {
 		terminal_scroll();
 	}
 
-	// newline support:
 	if (c == '\n') {
 		terminal_column = 0;
 		terminal_row++;
@@ -104,7 +103,6 @@ void terminal_putchar(char c) {
 
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 
-	// ++terminal_column and ++terminal_row increment before checking:
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
 		if (++terminal_row == VGA_HEIGHT) {

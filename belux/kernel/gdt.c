@@ -20,9 +20,9 @@ void gdt_set_gate(uint8_t num, uint64_t base, uint64_t limit, uint8_t access, ui
 }
 
 void gdt_install(void) {
-	gdt_pointer_t *gdtp = &gdt.pointer;
+	gdt_pointer_t* gdtp = &gdt.pointer;
 	gdtp->limit = sizeof gdt.entries - 1;
-	gdtp->base = (uintptr_t)&GDTENTRY(0);
+	gdtp->base = (uintptr_t) & GDTENTRY(0);
 
 	gdt_set_gate(0, 0, 0, 0, 0);                /* NULL segment */
 	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); /* Code segment */
@@ -32,7 +32,6 @@ void gdt_install(void) {
 
 	write_tss(5, 0x10, 0x0);
 
-	/* Go go go */
 	gdt_flush((uintptr_t)gdtp);
 	tss_flush();
 }

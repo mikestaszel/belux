@@ -6,8 +6,7 @@
 
 // printf for the kernel from aenix (http://littleosbook.github.io/)
 
-void fb_put_unsigned_int(uint32_t i)
-{
+void fb_put_unsigned_int(uint32_t i) {
 	uint32_t n, digit;
 	if (i >= 1000000000) {
 		n = 1000000000;
@@ -25,8 +24,7 @@ void fb_put_unsigned_int(uint32_t i)
 	}
 }
 
-void fb_put_hex(unsigned int n)
-{
+void fb_put_hex(unsigned int n) {
 	char *chars = "0123456789ABCDEF";
 	unsigned char b = 0;
 	int i;
@@ -37,8 +35,7 @@ void fb_put_hex(unsigned int n)
 	}
 }
 
-void printf(char *s, ...)
-{
+void printf(char* s, ...) {
 	va_list ap;
 	char *p;
 	uint32_t val;

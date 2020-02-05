@@ -3,18 +3,7 @@
 #include <kernel/io_ports.h>
 #include <kernel/idt.h>
 
-#define IDT_SIZE 256
 #define IDTENTRY(X) (idt.entries[(X)])
-
-struct IDT_entry {
-	uint16_t offset_lowerbits; // offset bits 0..15
-	uint16_t selector; // a code segment selector in GDT or LDT
-	uint8_t zero; // unused, set to 0
-	uint8_t type_attr; // type and attributes
-	uint16_t offset_higherbits; // offset bits 16..31
-};
-
-struct IDT_entry IDT[IDT_SIZE];
 
 typedef void (*idt_gate_t)(void);
 
@@ -201,7 +190,7 @@ void idt_init() {
 void idt_install(void) {
 	idt_pointer_t* idtp = &idt.pointer;
 	idtp->limit = sizeof idt.entries - 1;
-	idtp->base = (uintptr_t)&IDTENTRY(0);
+	idtp->base = (uintptr_t) & IDTENTRY(0);
 	memset(&IDTENTRY(0), 0, sizeof idt.entries);
 
 	idt_init();

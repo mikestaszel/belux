@@ -1,6 +1,8 @@
 #ifndef _KERNEL_IDT_H
 #define _KERNEL_IDT_H
 
+#define IDT_SIZE 256
+
 extern void idt_init();
 void idt_install(void);
 
@@ -21,5 +23,15 @@ static struct {
 	idt_entry_t entries[256];
 	idt_pointer_t pointer;
 } idt __attribute__((used));
+
+struct IDT_entry {
+	uint16_t offset_lowerbits; // offset bits 0..15
+	uint16_t selector; // a code segment selector in GDT or LDT
+	uint8_t zero; // unused, set to 0
+	uint8_t type_attr; // type and attributes
+	uint16_t offset_higherbits; // offset bits 16..31
+};
+
+struct IDT_entry IDT[IDT_SIZE];
 
 #endif

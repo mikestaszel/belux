@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <drivers/keyboard.h>
 
-// irq.c
 // from: https://wiki.osdev.org/Interrupts_tutorial
-
 
 void irq0_handler(void) {
 	outb(0x20, 0x20);
