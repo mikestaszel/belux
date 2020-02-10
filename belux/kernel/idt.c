@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdint.h>
-#include <kernel/io_ports.h>
+#include <kernel/io.h>
 #include <kernel/idt.h>
 
 #define IDTENTRY(X) (idt.entries[(X)])

@@ -22,7 +22,7 @@ $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
 $(ARCH_DIR)/tss.o \
-$(ARCH_DIR)/io_ports.o \
+$(ARCH_DIR)/io.o \
 $(ARCH_DIR)/tty.o \
 $(ARCH_DIR)/crtend.o \
 $(ARCH_DIR)/crtn.o \
@@ -54,7 +54,7 @@ $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
 $(ARCH_DIR)/tss.o \
-$(ARCH_DIR)/io_ports.o \
+$(ARCH_DIR)/io.o \
 $(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/irq.o \
 $(KERNEL_DIR)/tss.o \

@@ -1,5 +1,5 @@
 #include <string.h>
-#include <kernel/io_ports.h>
+#include <kernel/io.h>
 #include <kernel/serial.h>
 
 #define PORT 0x3f8 // COM1
