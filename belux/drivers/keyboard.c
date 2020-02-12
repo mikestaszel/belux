@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <kernel/isr.h>
 #include <kernel/io.h>
 #include <stdio.h>
 #include <drivers/keyboard.h>
@@ -83,7 +85,7 @@ unsigned char keyboard_map_shift[128] = {
 static char shift_pressed = 0;
 
 void keyboard_handler() {
-	outb(0x20, 0x20); // ack
+	// outb(0x20, 0x20); // ack
 
 	unsigned char status = inb(0x64);
 	
@@ -116,4 +118,8 @@ void keyboard_handler() {
 			putchar(c);
 		}
 	}
+}
+
+void init_keyboard() {
+	register_interrupt_handler(IRQ1, &keyboard_handler);
 }

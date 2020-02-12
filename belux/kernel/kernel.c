@@ -6,6 +6,9 @@
 #include <kernel/idt.h>
 #include <kernel/serial.h>
 #include <kernel/multiboot.h>
+#include <kernel/paging.h>
+#include <kernel/timer.h>
+#include <drivers/keyboard.h>
 #include <string.h>
 
 // The linker gives us these values:
@@ -27,23 +30,16 @@ void kernel_main(multiboot_info_t* mbt, unsigned int magic) {
 
 	// TODO: Don't forget to make all addresses pointing to memory locations in the Multiboot info structure also virtual.
 
-	// Are mem_* valid?
-	if (CHECK_FLAG(mbt->flags, 0)) {
-		printf("mem_lower = %uKB, mem_upper = %uKB\n", (unsigned) mbt->mem_lower, (unsigned) mbt->mem_upper);
-	}
+	printf("mem_lower = %uKB, mem_upper = %uKB\n", (unsigned) mbt->mem_lower, (unsigned) mbt->mem_upper);
+	
+	// init_timer(10);
+	init_keyboard();
 
 	printf("_kernel_virtual_start: 0x%x\n", &_kernel_virtual_start);
 	printf("_kernel_virtual_end: 0x%x\n", &_kernel_virtual_end);
 
-	// Is boot_device valid? 
-	// if (CHECK_FLAG (mbt->flags, 1)) {
-	// 	printf("boot_device = %x\n", (unsigned) mbt->boot_device);
-	// }
-
-	// Is the command line passed?
-	// if (CHECK_FLAG (mbt->flags, 2)) {
-	// 	printf("cmdline = %s\n", (char *) mbt->cmdline);
-	// }
+	// unsigned int* ptr = (unsigned int*)0xA0000000;
+	// unsigned int do_page_fault = *ptr;
 
 	while(1);
 }

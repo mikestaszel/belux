@@ -21,6 +21,7 @@ $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/interrupts.o \
 $(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io.o \
 $(ARCH_DIR)/tty.o \
@@ -38,8 +39,9 @@ $(LIBCK_DIR)/string/strlen.o \
 
 KERNEL_OBJS=\
 $(KERNEL_DIR)/idt.o \
-$(KERNEL_DIR)/irq.o \
+$(KERNEL_DIR)/isr.o \
 $(KERNEL_DIR)/gdt.o \
+$(KERNEL_DIR)/timer.o \
 $(KERNEL_DIR)/tss.o \
 $(KERNEL_DIR)/serial.o \
 $(KERNEL_DIR)/kernel.o \
@@ -53,13 +55,15 @@ $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/gdt.o \
 $(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/interrupts.o \
 $(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io.o \
 $(KERNEL_DIR)/idt.o \
-$(KERNEL_DIR)/irq.o \
+$(KERNEL_DIR)/isr.o \
 $(KERNEL_DIR)/tss.o \
 $(KERNEL_DIR)/serial.o \
 $(KERNEL_DIR)/gdt.o \
+$(KERNEL_DIR)/timer.o \
 $(ARCH_DIR)/tty.o \
 $(LIBCK_OBJS) \
 $(DRIVERS_OBJS) \
