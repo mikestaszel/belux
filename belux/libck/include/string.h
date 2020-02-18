@@ -8,6 +8,9 @@
 extern "C" {
 #endif
 
+#define ALIGN(x, a)              __ALIGN_MASK(x,(__typeof__(x))(a)-1)
+#define __ALIGN_MASK(x, mask)    (((x)+(mask))&~(mask))
+
 size_t strlen(const char*);
 int memcmp(const void* str1, const void* str2, size_t count);
 void* memmove(void* dest, void* src, size_t len);

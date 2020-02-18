@@ -1,4 +1,4 @@
-CFLAGS?=-O2 -g -std=gnu11
+CFLAGS?=-std=gnu11
 CPPFLAGS?=
 LDFLAGS?=
 LIBS?=
@@ -19,11 +19,10 @@ ARCH_OBJS=\
 $(ARCH_DIR)/crti.o \
 $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
-$(ARCH_DIR)/gdt.o \
-$(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/descriptor_tables.o \
 $(ARCH_DIR)/interrupts.o \
-$(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io.o \
+$(ARCH_DIR)/mmu.o \
 $(ARCH_DIR)/tty.o \
 $(ARCH_DIR)/crtend.o \
 $(ARCH_DIR)/crtn.o \
@@ -38,35 +37,34 @@ $(LIBCK_DIR)/string/memset.o \
 $(LIBCK_DIR)/string/strlen.o \
 
 KERNEL_OBJS=\
-$(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/isr.o \
-$(KERNEL_DIR)/gdt.o \
+$(KERNEL_DIR)/descriptor_tables.o \
 $(KERNEL_DIR)/timer.o \
-$(KERNEL_DIR)/tss.o \
+$(KERNEL_DIR)/kmalloc.o \
+$(KERNEL_DIR)/shell.o \
 $(KERNEL_DIR)/serial.o \
 $(KERNEL_DIR)/kernel.o \
 
-DRIVERS_OBJS=\
+DRIVER_OBJS=\
 $(DRIVERS_DIR)/keyboard.o \
 
 LINK_LIST=\
 $(ARCH_DIR)/crti.o \
 $(ARCH_DIR)/crtbegin.o \
 $(ARCH_DIR)/boot.o \
-$(ARCH_DIR)/gdt.o \
-$(ARCH_DIR)/idt.o \
+$(ARCH_DIR)/descriptor_tables.o \
 $(ARCH_DIR)/interrupts.o \
-$(ARCH_DIR)/tss.o \
 $(ARCH_DIR)/io.o \
-$(KERNEL_DIR)/idt.o \
 $(KERNEL_DIR)/isr.o \
-$(KERNEL_DIR)/tss.o \
 $(KERNEL_DIR)/serial.o \
-$(KERNEL_DIR)/gdt.o \
+$(KERNEL_DIR)/kmalloc.o \
+$(KERNEL_DIR)/descriptor_tables.o \
+$(KERNEL_DIR)/shell.o \
 $(KERNEL_DIR)/timer.o \
+$(ARCH_DIR)/mmu.o \
 $(ARCH_DIR)/tty.o \
 $(LIBCK_OBJS) \
-$(DRIVERS_OBJS) \
+$(DRIVER_OBJS) \
 $(ARCH_DIR)/crtend.o \
 $(ARCH_DIR)/crtn.o \
 
@@ -75,7 +73,7 @@ KERNEL_FILE=iso/boot/belux.bin
 
 .PHONY: run iso clean all
 
-$(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(DRIVERS_OBJS) $(KERNEL_OBJS)
+$(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(DRIVER_OBJS) $(KERNEL_OBJS)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) $(KERNEL_DIR)/kernel.o -lgcc
 
 $(KERNEL_DIR)/%.o: $(KERNEL_DIR)/%.c
@@ -108,6 +106,6 @@ run: $(ISO_FILE)
 	qemu-system-i386 -serial stdio -cdrom $(ISO_FILE)
 
 clean:
-	$(RM) $(ARCH_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS) $(KERNEL_FILE) $(ISO_FILE)
+	$(RM) $(ARCH_OBJS) $(DRIVER_OBJS) $(LIBCK_OBJS) $(KERNEL_OBJS) $(KERNEL_FILE) $(ISO_FILE)
 
 all: $(ISO_FILE)

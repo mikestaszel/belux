@@ -4,7 +4,7 @@
 
 #define PORT 0x3f8 // COM1
 
-void serial_initialize() {
+void init_serial() {
 	outb(PORT + 1, 0x00);
 	outb(PORT + 3, 0x80);
 	outb(PORT + 0, 0x03);

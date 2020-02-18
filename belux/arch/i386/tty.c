@@ -3,8 +3,6 @@
 #include <kernel/tty.h>
 #include <kernel/io.h>
 
-#include "vga.h"
-
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 
@@ -12,6 +10,14 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
+
+static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
+	return fg | bg << 4;
+}
+
+static inline uint16_t vga_entry(unsigned char uc, uint8_t color) {
+	return (uint16_t) uc | (uint16_t) color << 8;
+}
 
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
 	outb(0x3D4, 0x0A);
@@ -35,6 +41,12 @@ void update_cursor(int x, int y) {
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
+void handle_backspace() {
+	terminal_column--;
+	terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
+	update_cursor(terminal_column, terminal_row);
+}
+
 uint16_t get_cursor_position(void) {
 	// With this code, you get: pos = y * VGA_WIDTH + x.
 	// To obtain the coordinates, just calculate: y = pos / VGA_WIDTH; x = pos % VGA_WIDTH;
@@ -47,7 +59,6 @@ uint16_t get_cursor_position(void) {
 }
 
 void terminal_blank() {
-	// blank out the screen:
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
@@ -110,4 +121,15 @@ void terminal_putchar(char c) {
 		}
 	}
 	update_cursor(terminal_column, terminal_row);
+}
+
+void terminal_write(char* str) {
+	int i = 0;
+	char c;
+
+	while (str[i] != '\0') {
+		c = str[i];
+		terminal_putchar(c);
+		i++;
+	}
 }
