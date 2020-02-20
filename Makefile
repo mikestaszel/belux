@@ -1,4 +1,4 @@
-CFLAGS?=-std=gnu11
+CFLAGS?=-O0 -std=gnu11
 CPPFLAGS?=
 LDFLAGS?=
 LIBS?=
@@ -28,13 +28,8 @@ $(ARCH_DIR)/crtend.o \
 $(ARCH_DIR)/crtn.o \
 
 LIBCK_OBJS=\
-$(LIBCK_DIR)/stdio/printf.o \
-$(LIBCK_DIR)/stdio/putchar.o \
-$(LIBCK_DIR)/string/memcmp.o \
-$(LIBCK_DIR)/string/memcpy.o \
-$(LIBCK_DIR)/string/memmove.o \
-$(LIBCK_DIR)/string/memset.o \
-$(LIBCK_DIR)/string/strlen.o \
+$(LIBCK_DIR)/stdio.o \
+$(LIBCK_DIR)/string.o \
 
 KERNEL_OBJS=\
 $(KERNEL_DIR)/isr.o \
@@ -91,10 +86,7 @@ $(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 $(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
-$(LIBCK_DIR)/stdio/%.o: $(LIBCK_DIR)/stdio/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
-
-$(LIBCK_DIR)/string/%.o: $(LIBCK_DIR)/string/%.c
+$(LIBCK_DIR)/%.o: $(LIBCK_DIR)/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
 $(ISO_FILE): $(KERNEL_FILE)

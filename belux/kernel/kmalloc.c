@@ -4,7 +4,6 @@
 #include <kernel/kmalloc.h>
 #include <kernel/tty.h>
 #include <kernel/mmu.h>
-#include <kernel/serial.h>
 
 #define PAGE_SIZE 0x400000
 uintptr_t mmap_end = 0;
@@ -18,8 +17,8 @@ static bool initial_alloc = true;
 typedef struct chunk_header chunk_header_t;
 
 struct chunk_header {
-    chunk_header_t *next;
-    chunk_header_t *prev;
+    chunk_header_t* next;
+    chunk_header_t* prev;
     size_t size;
     unsigned short used;
 };
@@ -120,10 +119,6 @@ static chunk_header_t* find_unused_chunk(const size_t chunk_size) {
 
         // Find space in between chunks
         uintptr_t end_of_chunk = (uintptr_t) header + sizeof(chunk_header_t) + ALIGN(header->size, 4);
-        if (end_of_chunk > (uintptr_t) header->next) {
-            //panic("kmalloc: misaligned chunk %P (size %zu). Expected end: %P, actual next: %P\n",
-            //      header, header->size, end_of_chunk, header->next);
-        }
         uintptr_t unused_size = (uintptr_t) header->next - end_of_chunk;
         if (unused_size > chunk_size + sizeof(chunk_header_t)) {
             chunk_header_t* next_header = (chunk_header_t *) end_of_chunk;
@@ -159,7 +154,9 @@ void* kmalloc(size_t size) {
 }
 
 void kfree(void* ptr) {
-    if (ptr == NULL) return;
+    if (ptr == NULL) {
+        return;
+    }
     chunk_header_t* header = ptr - sizeof(chunk_header_t);
     header->used = false;
 }

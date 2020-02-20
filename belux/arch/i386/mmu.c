@@ -4,9 +4,9 @@
 #define KERNEL_PAGE_OFFSET 0xC0000000
 
 void* load_page_table() {
-	void *raw_ptr;
+	void* raw_ptr;
 	__asm__ volatile("mov %%cr3, %0" : "=a"(raw_ptr));
-	return (uint32_t *) ((uintptr_t) raw_ptr + KERNEL_PAGE_OFFSET);
+	return (uint32_t*) ((uintptr_t) raw_ptr + KERNEL_PAGE_OFFSET);
 }
 
 void page_table_set(uintptr_t address, uintptr_t page_addr, uint16_t flags) {

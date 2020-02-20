@@ -25,14 +25,11 @@ void kernel_main(multiboot_info_t* mbt, unsigned int magic) {
 	init_keyboard();
 
 	init_serial();
-	write_serial_str("Hello, world!\n");
+	write_serial_str("Serial port initialized.\n");
 
 	terminal_initialize();
 
 	shell_init(0);
 
-	while (1) {
-		shell_read();
-		key_buffer_print();
-	}
+	while (1);
 }

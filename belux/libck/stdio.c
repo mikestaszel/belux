@@ -3,8 +3,13 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <string.h>
+#include <kernel/tty.h>
 
-// printf for the kernel from aenix (http://littleosbook.github.io/)
+int putchar(int ic) {
+	char c = (char)ic;
+	terminal_putchar(c);
+	return ic;
+}
 
 void fb_put_unsigned_int(uint32_t i) {
 	uint32_t n, digit;
@@ -25,7 +30,7 @@ void fb_put_unsigned_int(uint32_t i) {
 }
 
 void fb_put_hex(unsigned int n) {
-	char *chars = "0123456789ABCDEF";
+	char* chars = "0123456789ABCDEF";
 	unsigned char b = 0;
 	int i;
 
@@ -35,6 +40,7 @@ void fb_put_hex(unsigned int n) {
 	}
 }
 
+// kernel printf from aenix (http://littleosbook.github.io/):
 void printf(char* s, ...) {
 	va_list ap;
 	char *p;
