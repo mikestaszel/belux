@@ -22,7 +22,6 @@ $(ARCH_DIR)/boot.o \
 $(ARCH_DIR)/descriptor_tables.o \
 $(ARCH_DIR)/interrupts.o \
 $(ARCH_DIR)/io.o \
-$(ARCH_DIR)/mmu.o \
 $(ARCH_DIR)/tty.o \
 $(ARCH_DIR)/crtend.o \
 $(ARCH_DIR)/crtn.o \
@@ -36,6 +35,7 @@ $(KERNEL_DIR)/isr.o \
 $(KERNEL_DIR)/descriptor_tables.o \
 $(KERNEL_DIR)/timer.o \
 $(KERNEL_DIR)/kmalloc.o \
+$(KERNEL_DIR)/mmu.o \
 $(KERNEL_DIR)/shell.o \
 $(KERNEL_DIR)/serial.o \
 $(KERNEL_DIR)/kernel.o \
@@ -56,7 +56,7 @@ $(KERNEL_DIR)/kmalloc.o \
 $(KERNEL_DIR)/descriptor_tables.o \
 $(KERNEL_DIR)/shell.o \
 $(KERNEL_DIR)/timer.o \
-$(ARCH_DIR)/mmu.o \
+$(KERNEL_DIR)/mmu.o \
 $(ARCH_DIR)/tty.o \
 $(LIBCK_OBJS) \
 $(DRIVER_OBJS) \
