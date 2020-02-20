@@ -231,15 +231,15 @@ void gdt_install(void) {
 	gdtp->limit = sizeof gdt.entries - 1;
 	gdtp->base = (uintptr_t) & GDTENTRY(0);
 
-	gdt_set_gate(0, 0, 0, 0, 0);                // NULL segment
-	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // Code segment
-	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Data segment
-	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User mode code segment
-	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
+	gdt_set_gate(0, 0, 0, 0, 0);
+	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
 
 	write_tss(5, 0x10, 0x0);
 
-	gdt_flush((uintptr_t)gdtp);
+	gdt_flush((uintptr_t) gdtp);
 	tss_flush();
 }
 

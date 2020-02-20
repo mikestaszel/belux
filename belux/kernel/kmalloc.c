@@ -8,35 +8,26 @@
 #include <kernel/serial.h>
 
 #define PAGE_SIZE 0x400000
+
 uintptr_t mmap_end = 0;
 void* start_chunk;
-
-// Initialized from multiboot:
 void* malloc_memory_start = NULL;
 void* malloc_memory_end = NULL;
 static bool initial_alloc = true;
 
-typedef struct chunk_header chunk_header_t;
-
-struct chunk_header {
-	chunk_header_t* next;
-	chunk_header_t* prev;
-	size_t size;
-	unsigned short used;
-};
-
 static int try_reclaim(chunk_header_t* start, size_t size) {
 	chunk_header_t* current_chunk = start;
 	if (current_chunk->next == NULL) {
-		return false;
+		return 0;
 	}
 
 	size_t unused = current_chunk->size;
 	current_chunk = current_chunk->next;
+	
 	while (!current_chunk->used) {
-		chunk_header_t *next_chunk = current_chunk->next;
+		chunk_header_t* next_chunk = current_chunk->next;
 		if (next_chunk == NULL) {
-			return 2; // Hit end of chunks
+			return 2;
 		}
 
 		unused += (uintptr_t) next_chunk - (uintptr_t) current_chunk;
@@ -54,13 +45,15 @@ static bool ensure_pages(void* new_end) {
 	uintptr_t phys_end = (uintptr_t) virt_to_phys(new_end);
 	while (mmap_end < phys_end) {
 		uintptr_t next_page = mmap_end;
+		
 		if (next_page == 0) {
 			next_page = ALIGN((uintptr_t) malloc_memory_start, PAGE_SIZE);
 		}
+
 		if (next_page + PAGE_SIZE > (uintptr_t) malloc_memory_end) {
-			// Oops, out of memory
 			return false;
 		}
+
 		page_table_set(next_page, (uintptr_t) phys_to_virt((void*) next_page), 0x83);
 		mmap_end = next_page + PAGE_SIZE;
 	}
@@ -83,55 +76,55 @@ static chunk_header_t* find_unused_chunk(const size_t chunk_size) {
 		return header;
 	}
 
-	chunk_header_t *header = start_chunk;
-	while (true) {
-		if (!header->used) {
-			if (header->size >= chunk_size) {
-				// Unused chunk is large enough, go ahead and use it
-				return header;
-			}
-			int ret = try_reclaim(header, chunk_size);
-			if (ret == 1) {
-				// There's a next chunk, and we were able to reclaim enough unused space
-				return header;
-			} else if (ret == 2) {
-				// We hit the end of allocated chunks, so do some housekeeping
-				if (header->prev != NULL) {
-					header->prev->next = NULL;
-					header = header->prev;
-				} else {
-					// Should not be true, unless something crazy happened
-					header->next = NULL;
+	else {
+		chunk_header_t* header = start_chunk;
+		while (true) {
+			if (!header->used) {
+				if (header->size >= chunk_size) {
+					return header;
+				}
+				int ret = try_reclaim(header, chunk_size);
+				if (ret == 1) {
+					return header;
+				} else if (ret == 2) {
+					// We hit the end of allocated chunks, so do some housekeeping
+					if (header->prev != NULL) {
+						header->prev->next = NULL;
+						header = header->prev;
+					} else {
+						header->next = NULL;
+					}
 				}
 			}
-		}
 
-		// Allocate new chunk if end
-		if (header->next == NULL) {
-			void* next = (void*) header + sizeof(chunk_header_t) + ALIGN(header->size, 4);
-			if (!ensure_pages(next + chunk_size + sizeof(chunk_header_t))) {
-				return NULL;
+			// Allocate new chunk if end
+			if (header->next == NULL) {
+				void* next = (void*) header + sizeof(chunk_header_t) + ALIGN(header->size, 4);
+				if (!ensure_pages(next + chunk_size + sizeof(chunk_header_t))) {
+					return NULL;
+				}
+
+				chunk_header_t* next_header = memset(next, 0, sizeof(chunk_header_t));
+				header->next = next_header;
+				next_header->prev = header;
+				return next;
 			}
 
-			chunk_header_t* next_header = memset(next, 0, sizeof(chunk_header_t));
-			header->next = next_header;
-			next_header->prev = header;
-			return next;
-		}
+			// Find space in between chunks
+			uintptr_t end_of_chunk = (uintptr_t) header + sizeof(chunk_header_t) + ALIGN(header->size, 4);
+			uintptr_t unused_size = (uintptr_t) header->next - end_of_chunk;
+			if (unused_size > chunk_size + sizeof(chunk_header_t)) {
+				chunk_header_t* next_header = (chunk_header_t*) end_of_chunk;
+				memset(next_header, 0, sizeof(chunk_header_t));
+				next_header->next = header->next;
+				next_header->prev = header;
+				header->next->prev = next_header;
+				header->next = next_header;
+				return next_header;
+			}
 
-		// Find space in between chunks
-		uintptr_t end_of_chunk = (uintptr_t) header + sizeof(chunk_header_t) + ALIGN(header->size, 4);
-		uintptr_t unused_size = (uintptr_t) header->next - end_of_chunk;
-		if (unused_size > chunk_size + sizeof(chunk_header_t)) {
-			chunk_header_t* next_header = (chunk_header_t *) end_of_chunk;
-			memset(next_header, 0, sizeof(chunk_header_t));
-			next_header->next = header->next;
-			next_header->prev = header;
-			header->next->prev = next_header;
-			header->next = next_header;
-			return next_header;
+			header = header->next;
 		}
-		header = header->next;
 	}
 
 	return NULL;
@@ -145,7 +138,7 @@ void* kmalloc(size_t size) {
 	
 	chunk_header_t* header = find_unused_chunk(size);
 	if (header == NULL) {
-		write_serial_str("kmalloc: header was NULL, returning NULL...\n");
+		write_serial_str("kmalloc: no unused chunks, cannot malloc. Returning NULL...\n");
 		return NULL;
 	}
 	

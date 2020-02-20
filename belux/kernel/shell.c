@@ -50,10 +50,14 @@ void shell_init() {
 char key_buffer_append(const char c) {
 	if (key_buffer == NULL) {
 		key_buffer = kmalloc(key_buffer_size = KEY_BUFFER_INITIAL_SIZE);
-		if (key_buffer == NULL) return 0;
+		if (key_buffer == NULL) {
+			return 0;
+		}
 	} else if (key_buffer_size <= key_buffer_used + 1) {
 		key_buffer = krealloc(key_buffer, key_buffer_size += KEY_BUFFER_INITIAL_SIZE);
-		if (key_buffer == NULL) return 0;
+		if (key_buffer == NULL) {
+			return 0;
+		}
 	}
 
 	terminal_putchar(c);

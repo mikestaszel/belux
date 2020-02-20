@@ -2,7 +2,7 @@
 #include <kernel/io.h>
 #include <kernel/serial.h>
 
-#define PORT 0x3f8 // COM1
+#define PORT 0x3F8 // COM1
 
 void init_serial() {
 	outb(PORT + 1, 0x00);

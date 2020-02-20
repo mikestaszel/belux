@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-
-#define KERNEL_PAGE_OFFSET 0xC0000000
+#include <kernel/mmu.h>
 
 void* load_page_table() {
 	void* raw_ptr;

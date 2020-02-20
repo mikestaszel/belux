@@ -18,7 +18,7 @@ void kernel_main(multiboot_info_t* multiboot_info) {
 	extern void* malloc_memory_start;
 	extern void* malloc_memory_end;
 
-	malloc_memory_start = (void *) 0x100000 + KERNEL_OFFSET;
+	malloc_memory_start = (void*) 0x100000 + KERNEL_OFFSET;
 	malloc_memory_end = malloc_memory_start + (multiboot_info->mem_upper * 0x400) - KERNEL_OFFSET;
 
 	init_timer(10);
