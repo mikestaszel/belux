@@ -23,17 +23,6 @@ static size_t key_buffer_size;
 static size_t key_buffer_used;
 static size_t key_buffer_printed;
 
-int strcmp(const char* const str1, const char* const str2) {
-	const unsigned char* p1 = (unsigned char*) str1;
-	const unsigned char* p2 = (unsigned char*) str2;
-
-	while (*p1 != '\0' && *p1 == *p2) {
-		p1++, p2++;
-	}
-
-	return *p1 - *p2;
-}
-
 int strncmp(const char* str1, const char* str2, size_t num) {
 	while (*str1 && num && (*str1 == *str2)) {
 		++str1;
@@ -68,7 +57,7 @@ static void print_prompt(int ret) {
 static void shell_callback(char* input) {
 	int ret = 1;
 	int save = 0;
-	if (strcmp(input, "exit") == 0 || strcmp(input, "poweroff") == 0) {
+	if (strncmp(input, "exit", 4) == 0 || strncmp(input, "poweroff", 8) == 0) {
 		// outb(0xf4, 0x00);
 		// outb(0xB004, 0x2000);
 		// outb(0x604, 0x2000);
