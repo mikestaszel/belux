@@ -1,8 +1,6 @@
 #ifndef _KERNEL_KMALLOC_H
 #define _KERNEL_KMALLOC_H
 
-#include <stdint.h>
-
 void* kmalloc(size_t size);
 void* krealloc(void* ptr, size_t new_size);
 void kfree(void* ptr);

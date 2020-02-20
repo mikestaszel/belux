@@ -1,5 +1,5 @@
-#ifndef _STRING_H_LIBCK
-#define _STRING_H_LIBCK
+#ifndef _LIBCK_STRING_H
+#define _LIBCK_STRING_H
 
 #include <sys/cdefs.h>
 #include <stddef.h>

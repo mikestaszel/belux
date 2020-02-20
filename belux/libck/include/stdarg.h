@@ -1,5 +1,5 @@
-#ifndef _STDARG_H_LIBCK
-#define _STDARG_H_LIBCK
+#ifndef _LIBCK_STDARG_H
+#define _LIBCK_STDARG_H
 
 /* Uses GCC implementations for all the variadic argument macros */
 #define va_start(v, l) __builtin_va_start(v, l)

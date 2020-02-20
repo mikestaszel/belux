@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <kernel/kmalloc.h>
 #include <drivers/keyboard.h>
@@ -6,17 +7,8 @@
 #include <kernel/tty.h>
 #include <kernel/shell.h>
 
-#define MAX(a, b) \
-   ({ __typeof__ (a) _a = (a); \
-	   __typeof__ (b) _b = (b); \
-	 _a > _b ? _a : _b; })
-
-#define MIN(a, b) \
-   ({ __typeof__ (a) _a = (a); \
-	   __typeof__ (b) _b = (b); \
-	 _a < _b ? _a : _b; })
-
 #define KEY_BUFFER_INITIAL_SIZE 0x100
+
 static char* key_buffer;
 static size_t key_buffer_size;
 static size_t key_buffer_used;

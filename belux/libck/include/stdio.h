@@ -1,5 +1,5 @@
-#ifndef _STDIO_H_LIBCK
-#define _STDIO_H_LIBCK
+#ifndef _LIBCK_STDIO_H
+#define _LIBCK_STDIO_H
 
 #include <sys/cdefs.h>
 #include <stdint.h>
