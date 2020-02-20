@@ -55,7 +55,6 @@ _start:
 	invlpg [0]
 
 	mov esp, stack_top
-	push eax
 
 	; the address of multiboot_info_t passed is physical - need to make it virtual
 	add ebx, KERNEL_VIRTUAL_BASE

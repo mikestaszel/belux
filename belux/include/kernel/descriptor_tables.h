@@ -1,6 +1,9 @@
 #ifndef _KERNEL_DESCRIPTOR_TABLES_H
 #define _KERNEL_DESCRIPTOR_TABLES_H
 
+#define GDTENTRY(X) (gdt.entries[(X)])
+#define IDTENTRY(X) (idt.entries[(X)])
+
 /* TSS */
 typedef struct tss_entry {
 	uint32_t prev_tss;
@@ -37,6 +40,8 @@ typedef struct tss_entry {
 
 extern void idt_init();
 void idt_install(void);
+
+typedef void (*idt_gate_t)(void);
 
 typedef struct {
 	uint16_t base_low;

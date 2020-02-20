@@ -33,13 +33,8 @@ void key_buffer_print() {
 	}
 }
 
-static void print_prompt(int ret) {
-	printf("%u # ", ret);
-}
-
 static void shell_callback(char* input) {
 	int ret = 1;
-	int save = 0;
 	if (strncmp(input, "ls", 2) == 0) {
 		printf("no ls for you.\n");
 		ret = 0;
@@ -48,9 +43,12 @@ static void shell_callback(char* input) {
 		ret = 0;
 	} else {
 		printf("Command not found: %s\n", input);
-		save = 0;
 	}
 	print_prompt(ret);
+}
+
+void print_prompt(int ret) {
+	printf("%u # ", ret);
 }
 
 void shell_init() {

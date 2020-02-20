@@ -1,9 +1,7 @@
 #include <string.h>
 #include <stdint.h>
+#include <kernel/io.h>
 #include <kernel/descriptor_tables.h>
-
-#define GDTENTRY(X) (gdt.entries[(X)])
-#define IDTENTRY(X) (idt.entries[(X)])
 
 /* TSS */
 void write_tss(int32_t num, uint16_t ss0, uint32_t esp0) {
@@ -28,8 +26,6 @@ void write_tss(int32_t num, uint16_t ss0, uint32_t esp0) {
 }
 
 /* IDT */
-typedef void (*idt_gate_t)(void);
-
 void idt_set_gate(uint8_t num, idt_gate_t base, uint16_t sel, uint8_t flags) {
 	IDTENTRY(num).base_low = ((uintptr_t)base & 0xFFFF);
 	IDTENTRY(num).base_high = ((uintptr_t)base >> 16) & 0xFFFF;

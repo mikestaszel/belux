@@ -27,5 +27,6 @@ void terminal_initialize();
 void terminal_putchar(char c);
 void terminal_write(char* str);
 void handle_backspace();
+void terminal_putentryat(char c, uint8_t color, size_t x, size_t y);
 
 #endif

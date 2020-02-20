@@ -1,11 +1,6 @@
 #ifndef _KERNEL_KMALLOC_H
 #define _KERNEL_KMALLOC_H
 
-#define bool _Bool
-#define true 1
-#define false 0
-
-#include <string.h>
 #include <stdint.h>
 
 void* kmalloc(size_t size);
