@@ -5,7 +5,7 @@
 
 /* TSS */
 void write_tss(int32_t num, uint16_t ss0, uint32_t esp0) {
-	tss_entry_t * tss = &gdt.tss;
+	tss_entry_t* tss = &gdt.tss;
 	uintptr_t base = (uintptr_t)tss;
 	uintptr_t limit = base + sizeof *tss;
 
@@ -27,8 +27,8 @@ void write_tss(int32_t num, uint16_t ss0, uint32_t esp0) {
 
 /* IDT */
 void idt_set_gate(uint8_t num, idt_gate_t base, uint16_t sel, uint8_t flags) {
-	IDTENTRY(num).base_low = ((uintptr_t)base & 0xFFFF);
-	IDTENTRY(num).base_high = ((uintptr_t)base >> 16) & 0xFFFF;
+	IDTENTRY(num).base_low = ((uintptr_t) base & 0xFFFF);
+	IDTENTRY(num).base_high = ((uintptr_t) base >> 16) & 0xFFFF;
 	IDTENTRY(num).sel = sel;
 	IDTENTRY(num).zero = 0;
 	IDTENTRY(num).flags = flags | 0x60;
