@@ -1,3 +1,5 @@
+; From James Molloy's Kernel Tutorial
+
 extern isr_handler
 extern irq_handler
 

@@ -3,6 +3,12 @@
 #include <kernel/tty.h>
 #include <kernel/io.h>
 
+/* 
+
+Code is mostly from the OSDev Wiki
+
+*/
+
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 

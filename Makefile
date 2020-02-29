@@ -66,33 +66,22 @@ $(ARCH_DIR)/crtn.o \
 ISO_FILE=belux.iso
 KERNEL_FILE=iso/boot/belux.bin
 
-.PHONY: run iso clean all
+.PHONY: run clean all
 
 $(KERNEL_FILE): $(ARCH_OBJS) $(LIBCK_OBJS) $(DRIVER_OBJS) $(KERNEL_OBJS)
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $(KERNEL_FILE) $(CFLAGS) -nostdlib $(LDFLAGS) $(LINK_LIST) $(KERNEL_DIR)/kernel.o -lgcc
 
-$(KERNEL_DIR)/%.o: $(KERNEL_DIR)/%.c
+%.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
 
-$(DRIVERS_DIR)/%.o: $(DRIVERS_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
-
-$(ARCH_DIR)/%.o: $(ARCH_DIR)/%.asm
+%.o: %.asm
 	nasm $(NASMFLAGS) $< -o $@
 
 $(ARCH_DIR)/crtbegin.o $(ARCH_DIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
-$(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
-
-$(LIBCK_DIR)/%.o: $(LIBCK_DIR)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS) $(KERNELINCLUDE)
-
 $(ISO_FILE): $(KERNEL_FILE)
 	grub-mkrescue -o $(ISO_FILE) iso/
-
-iso: $(ISO_FILE)
 
 run: $(ISO_FILE)
 	qemu-system-i386 -serial stdio -cdrom $(ISO_FILE)
